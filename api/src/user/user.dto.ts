@@ -1,4 +1,5 @@
 import { IsString, IsEmail, IsDate, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateUserDto {
     @IsString()
@@ -9,9 +10,10 @@ export class CreateUserDto {
     @IsNotEmpty()
     lastName: string;
 
+    @Transform(({ value }) => new Date(value))
     @IsDate()
     @IsNotEmpty()
-    birthDate: Date;
+    birthDate: string;
 
     @IsEmail()
     @IsNotEmpty()
@@ -49,6 +51,7 @@ export class UpdateUserDto {
     @IsString()
     lastName: string;
 
+    @Transform(({ value }) => new Date(value))
     @IsDate()
     birthDate: Date;
 

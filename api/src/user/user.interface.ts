@@ -1,7 +1,7 @@
 export interface User {
     firstName: string;
     lastName: string;
-    birthDate: Date;
+    birthDate: string;
     email: string;
     gender: string;
     country: string;

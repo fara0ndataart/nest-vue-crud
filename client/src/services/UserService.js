@@ -3,8 +3,15 @@ import api from './api';
 const usersPrefix = '/users'
 
 export default {
-    getAll() {
-        return api().get(`${usersPrefix}`);
+    /**
+     * @param {number} page
+     * @param {number} limit
+     */
+    getAll(page, limit) {
+        const pageQuery = page ? '?page=' + page : '';
+        const limitQuery = limit ? '&limit=' + limit : '';
+
+        return api().get(`${usersPrefix}${pageQuery}${limitQuery}`);
     },
     /**
      * @param {String} id

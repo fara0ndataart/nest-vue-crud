@@ -1,6 +1,10 @@
 <template>
     <v-container>
-        <Form :validation-schema="schema" v-slot="{ handleReset }" @submit="createUser">
+        <Form
+            :validation-schema="schema"
+            v-slot="{ handleReset }"
+            @submit="createUser"
+        >
             <v-row>
                 <v-col cols="12" md="2">
                     <Field name="FirstName" v-slot="{ field, errors }">
@@ -25,16 +29,16 @@
                     </Field>
                 </v-col>
                 <v-col cols="12" md="2">
-<!--                    <Field name="Date of Birth" v-slot="{ field, errors }">-->
+                    <Field name="Date of Birth" v-slot="{ field, errors }">
                         <v-text-field
                             v-model="newUser.birthDate"
                             label="Date of Birth"
                             variant="underlined"
-
+                            v-bind="field"
+                            :error-messages="errors"
+                            v-maska:[options]
                         ></v-text-field>
-<!--                    v-bind="field"-->
-<!--                    :error-messages="errors"-->
-<!--                    </Field>-->
+                    </Field>
                 </v-col>
                 <v-col cols="12" md="3">
                     <Field name="Email ID" v-slot="{ field, errors }">
@@ -62,7 +66,7 @@
                                 :key="gender.id"
                                 :label="gender.label"
                                 :value="gender.id"
-                                color="yellow darken-2"
+                                color="amber-accent-2"
                             ></v-radio>
                         </v-radio-group>
                     </Field>
@@ -75,7 +79,7 @@
                         <v-select
                             v-model="newUser.country"
                             label="Country"
-                            :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+                            :items="['US']"
                             variant="underlined"
                             v-bind="field"
                             :error-messages="errors"
@@ -99,7 +103,7 @@
                         <v-select
                             v-model="newUser.city"
                             label="City"
-                            :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+                            :items="['Buffalo', 'Rochester', 'Yonkers', 'Syracuse',  'Albany']"
                             variant="underlined"
                             v-bind="field"
                             :error-messages="errors"
@@ -139,7 +143,7 @@
                 </v-btn>
 
                 <v-btn
-                    color="yellow darken-2"
+                    color="amber-accent-2"
                     class="ml-3"
                     @click="resetUserForm(handleReset)"
                 >
@@ -184,35 +188,47 @@
                                 <template  v-if="user.edit">
                                     <td>{{ ++key }}</td>
                                     <td>
-                                        <v-text-field
-                                            v-model="user.firstName"
-                                            variant="underlined"
-                                        ></v-text-field>
+                                       <v-text-field
+                                           v-model="user.firstName"
+                                           variant="underlined"
+                                           :class="{'input-invalid': !user.firstName}"
+                                       ></v-text-field>
                                     </td>
                                     <td>
                                         <v-text-field
                                             v-model="user.lastName"
                                             variant="underlined"
+                                            :class="{'input-invalid': !user.lastName}"
                                         ></v-text-field>
                                     </td>
-                                    <td>{{ formatDate(user.birthDate) }}</td>
+                                    <td>
+                                        <v-text-field
+                                            v-model="user.birthDate"
+                                            variant="underlined"
+                                            :class="{'input-invalid': !user.birthDate}"
+                                            v-maska:[options]
+                                        ></v-text-field>
+                                    </td>
                                     <td>
                                         <v-text-field
                                             v-model="user.email"
                                             variant="underlined"
+                                            :class="{'input-invalid': !user.email}"
                                         ></v-text-field>
                                     </td>
                                     <td>
                                         <v-text-field
                                             v-model="user.gender"
                                             variant="underlined"
+                                            :class="{'input-invalid': !user.gender}"
                                         ></v-text-field>
                                     </td>
                                     <td>
                                         <v-select
                                             v-model="user.country"
-                                            :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+                                            :items="['US']"
                                             variant="underlined"
+                                            :class="{'input-invalid': !user.country}"
                                         ></v-select>
                                     </td>
                                     <td>
@@ -220,37 +236,49 @@
                                             v-model="user.state"
                                             :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
                                             variant="underlined"
+                                            :class="{'input-invalid': !user.state}"
                                         ></v-select>
                                     </td>
                                     <td>
                                         <v-select
                                             v-model="user.city"
-                                            :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+                                            :items="['Buffalo', 'Rochester', 'Yonkers', 'Syracuse',  'Albany']"
                                             variant="underlined"
+                                            :class="{'input-invalid': !user.city}"
                                         ></v-select>
                                     </td>
                                     <td>
                                         <v-text-field
                                             v-model="user.address"
                                             variant="underlined"
+                                            :class="{'input-invalid': !user.address}"
                                         ></v-text-field>
                                     </td>
                                     <td>
                                         <v-text-field
                                             v-model="user.pincode"
                                             variant="underlined"
+                                            :class="{'input-invalid': !user.pincode}"
                                         ></v-text-field>
                                     </td>
                                     <td>
-                                        <v-btn icon @click="editUser(user)">
-                                            <v-icon class="action-buttons">
+                                        <v-btn
+                                            icon
+                                            :class="['action-button', {'disabled': isEditingDisabled(user)}]"
+                                            @click="editUser(user)"
+                                        >
+                                            <v-icon class="action-icon">
                                                 mdi-pencil
                                             </v-icon>
                                         </v-btn>
                                     </td>
                                     <td>
-                                        <v-btn icon @click="deleteUser(user._id)">
-                                            <v-icon class="action-buttons">
+                                        <v-btn
+                                            icon
+                                            class="action-button"
+                                            @click="deleteUser(user._id)"
+                                        >
+                                            <v-icon class="action-icon">
                                                 mdi-delete
                                             </v-icon>
                                         </v-btn>
@@ -273,15 +301,23 @@
                                     <td>{{ user.address }}</td>
                                     <td>{{ user.pincode }}</td>
                                     <td>
-                                        <v-btn icon @click="editUser(user)">
-                                            <v-icon class="action-buttons">
+                                        <v-btn
+                                            icon
+                                            class="action-button"
+                                            @click="editUser(user)"
+                                        >
+                                            <v-icon class="action-icon">
                                                 mdi-pencil
                                             </v-icon>
                                         </v-btn>
                                     </td>
                                     <td>
-                                        <v-btn icon @click="deleteUser(user._id)">
-                                            <v-icon class="action-buttons">
+                                        <v-btn
+                                            icon
+                                            class="action-button"
+                                            @click="deleteUser(user._id)"
+                                        >
+                                            <v-icon class="action-icon">
                                                 mdi-delete
                                             </v-icon>
                                         </v-btn>
@@ -293,29 +329,66 @@
                 </v-card-text>
             </v-card>
         </v-row>
+
+        <v-row>
+            <v-col cols="12" class="d-flex justify-end">
+                <p class="mt-5 font-weight-light">Items per page</p>
+                <v-select
+                    v-model="pagination.limit"
+                    :items="[3, 5, 10]"
+                    variant="underlined"
+                    class="custom-select"
+                ></v-select>
+                <p class="mt-5 mr-10 font-weight-light">
+                    {{ displayedPages }}
+                </p>
+                <div class="mt-5 font-weight-light">
+                    <v-icon
+                        :class="{'navigation-disabled': !pagination.prevPage }"
+                        @click="getPreviousPage"
+                    >
+                        mdi-chevron-left
+                    </v-icon>
+
+                    <v-icon
+                        :class="{'navigation-disabled': !pagination.nextPage }"
+                        @click="getNextPage"
+                    >
+                        mdi-chevron-right
+                    </v-icon>
+
+                </div>
+            </v-col>
+        </v-row>
     </v-container>
 </template>
 
 <script setup>
     import { Field, Form } from 'vee-validate';
+    import { vMaska } from "maska"
     import * as yup from 'yup';
     import {
         computed,
         reactive,
         ref,
         inject,
+        watch,
         onMounted
     } from 'vue';
     import UserService from "@/services/UserService";
 
-    onMounted(() => getAllUsers());
+    onMounted(() => {
+        const { page, limit } = pagination;
 
-    const swal = inject('$swal');
+        getAllUsers(page, limit);
+    });
 
     const genders = [
         { id: 'male', label: 'Male' },
         { id: 'female', label: 'Female' },
     ];
+
+    const swal = inject('$swal');
 
     const schema = yup.object({
         'FirstName': yup.string().required(),
@@ -343,7 +416,21 @@
         pincode: null
     });
     const users = reactive([]);
+    const options = reactive({
+        mask: "####-##-##",
+        eager: true
+    });
+    const pagination = reactive({
+        page: 1,
+        limit: 3
+    })
     const search = ref('');
+
+    watch(
+        () => pagination.limit,
+        () => getAllUsers(),
+        { deep: true }
+    );
 
     const filteredUsers = computed(() => {
         const searchTerm = search.value.toLowerCase();
@@ -358,12 +445,20 @@
         });
     });
 
-    const createUser = async () => {
+    const displayedPages = computed(() => {
+        const { page, totalPages } = pagination;
+        const currentPage = page > totalPages ? totalPages : page;
+
+        return `${currentPage} — ${totalPages} of ${totalPages}`
+    });
+
+    const createUser = async (value, { resetForm }) => {
         try {
             await UserService.create(newUser);
             await getAllUsers();
             await resetUserForm();
-            await showSuccessMessage('User has been successfully added')
+            await resetForm();
+            await showSuccessMessage('User has been successfully created');
         } catch (e) {
             showErrorMessage(e.response.data.message.join(', '));
         }
@@ -373,6 +468,7 @@
         try {
             await UserService.delete(id);
             await getAllUsers();
+            await showSuccessMessage('User has been successfully deleted');
         } catch (e) {
             showErrorMessage(e.response.data.message.join(', '))
         }
@@ -385,6 +481,7 @@
             try {
                 await UserService.update(user._id, user);
                 await getAllUsers();
+                await showSuccessMessage('User has been successfully updated');
             } catch (e) {
                 showErrorMessage(e.response.data.message.join(', '))
             }
@@ -397,44 +494,79 @@
         return `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
     }
 
-    const getAllUsers = async () => {
+    const getAllUsers = async (page = pagination.page, limit = pagination.limit) => {
         try {
-            const { data: fetchedUsers } = await UserService.getAll();
+            const { data } = await UserService.getAll(page, limit);
+            const { docs: fetchedUsers, ...paginationData } = data;
+
             const mappedUsers = fetchedUsers.map(user => {
                 return {
                     ...user,
                     edit: false
                 }
             });
+
+            Object.assign(pagination, paginationData);
             users.splice(0, users.length, ...mappedUsers);
         } catch (e) {
             showErrorMessage(e.response.data.message.join(', '));
         }
     }
 
+    const getPreviousPage = () => {
+        const { prevPage, limit } = pagination;
+
+        getAllUsers(prevPage, limit);
+    }
+
+    const getNextPage = () => {
+        const { nextPage, limit } = pagination;
+
+        getAllUsers(nextPage, limit);
+    }
+
+    const isEditingDisabled = (user) => {
+        const filteredUser = Object.fromEntries(Object.entries(user).filter(([key]) => key !== "_id" && key !== "__v"))
+
+        return Object.values(filteredUser).map(value => value).some(value => !value)
+    }
+
     const resetUserForm = (handleReset) => {
         Object.keys(newUser).forEach(key => newUser[key] = null);
-        handleReset();
-    };
 
-    const showSuccessMessage = (text) => swal.fire({
-        icon: 'success',
-        title: 'Wow',
-        text
-    });
+        if (typeof handleReset === 'function') {
+            handleReset();
+        }
+    };
 
     const showErrorMessage = (text) => swal.fire({
         icon: 'error',
         title: 'Something went wrong',
         text
     });
+
+    const showSuccessMessage = (text) => swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text
+    });
 </script>
 
-<style scoped lang="scss">
-    .action-buttons {
-        background-color: #ffd740;
-        border-radius: 50%;
-        padding: 20px;
+<style lang="scss">
+    .action-button {
+        .action-icon {
+            background-color: #ffd740;
+            border-radius: 50%;
+            padding: 20px;
+        }
+
+        &.disabled {
+            pointer-events: none;
+
+            .action-icon {
+                background-color: #b9b4b4;
+            }
+        }
     }
 
     .text-ellipsis {
@@ -442,5 +574,19 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         width: 80px;
+    }
+
+    .input-invalid .v-input__control input {
+        border-bottom: 3px solid red;
+    }
+
+    .custom-select {
+        max-width: 75px;
+        margin: 0 30px 0 10px;
+    }
+
+    .navigation-disabled {
+        pointer-events: none;
+        cursor: not-allowed;
     }
 </style>
