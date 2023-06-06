@@ -11,5 +11,5 @@ stop:
 	docker-compose down
 
 # Check Docker Compose status
-stop:
+status:
 	docker-compose ps

@@ -2,7 +2,7 @@
 FROM node:14-alpine AS client
 
 # Set the working directory for client
-WORKDIR /app/client
+WORKDIR /client
 
 # Copy client package.json and package-lock.json
 COPY client/package*.json ./
@@ -16,11 +16,14 @@ COPY client .
 # Build the client project
 RUN npm run build
 
+# Start the API
+CMD ["npm", "run", "serve"]
+
 # Base image for API
 FROM node:14-alpine AS api
 
 # Set the working directory for API
-WORKDIR /app/api
+WORKDIR /api
 
 # Copy API package.json and package-lock.json
 COPY api/package*.json ./
@@ -31,7 +34,13 @@ RUN npm install
 # Copy the entire API project
 COPY api .
 
-# Expose the API port (adjust if necessary)
+# Build the API project
+RUN npm run build
+
+# Run the seeders
+CMD ["npm", "run", "seed"]
+
+# Expose the API port
 EXPOSE 3000
 
 # Start the API
