@@ -1,7 +1,7 @@
-import { seeder } from "nestjs-seeder";
-import { MongooseModule } from "@nestjs/mongoose";
-import { User, UserSchema } from "./user/user.model";
-import { UsersSeeder } from "./user/user.seed";
+import { seeder } from 'nestjs-seeder';
+import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from './user/user.model';
+import { UsersSeeder } from './user/user.seed';
 
 seeder({
     imports: [

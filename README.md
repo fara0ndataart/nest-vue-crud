@@ -2,8 +2,8 @@
 
 ## Prerequisites
 
-- Node.js (version X.X.X or higher)
-- Docker (version X.X.X or higher)
+- Node.js (version 14.X.X or higher)
+- Docker (version 14.X.X or higher)
 
 ## Installation
 
@@ -34,7 +34,6 @@
 ### If using Docker for deployment:
 
 Can be deployed by using Makefile or by using the following commands:
-
 
 1. build:docker-compose build
 2. run: docker-compose up -d

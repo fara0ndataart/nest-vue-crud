@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import * as paginate from "mongoose-paginate-v2";
-import { Factory } from "nestjs-seeder";
+import * as paginate from 'mongoose-paginate-v2';
+import { Factory } from 'nestjs-seeder';
 
 @Schema()
 export class User {
